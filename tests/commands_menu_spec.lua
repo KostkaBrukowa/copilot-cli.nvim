@@ -10,8 +10,8 @@ describe("Commands Menu", function()
   local mock_picker_instance
 
   before_each(function()
-    package.loaded["gemini_cli.commands_menu"] = nil
-    package.loaded["gemini_cli.api"] = nil
+    package.loaded["copilot_cli.commands_menu"] = nil
+    package.loaded["copilot_cli.api"] = nil
 
     -- Mock API module
     api_mock = {
@@ -24,11 +24,11 @@ describe("Commands Menu", function()
       add_read_only_file = stub.new(),
     }
 
-    package.loaded["gemini_cli.api"] = api_mock
-    commands_menu = require("gemini_cli.commands_menu")
+    package.loaded["copilot_cli.api"] = api_mock
+    commands_menu = require("copilot_cli.commands_menu")
 
     -- Mock picker and notifications
-    picker_mock = mock(require("gemini_cli.picker"), true)
+    picker_mock = mock(require("copilot_cli.picker"), true)
     mock_picker_instance = { close = spy.new() }
     picker_mock.create.returns(mock_picker_instance)
     notify_spy = spy.on(vim, "notify")
@@ -36,8 +36,8 @@ describe("Commands Menu", function()
 
   after_each(function()
     mock.revert(picker_mock)
-    package.loaded["gemini_cli.commands_menu"] = nil
-    package.loaded["gemini_cli.api"] = nil
+    package.loaded["copilot_cli.commands_menu"] = nil
+    package.loaded["copilot_cli.api"] = nil
   end)
 
   describe("Command Registration", function()
@@ -74,7 +74,7 @@ describe("Commands Menu", function()
 
     it("should handle invalid commands", function()
       commands_menu._load_command({ "invalid_command" })
-      assert.spy(notify_spy).was_called_with("Invalid GeminiCLI command: invalid_command", vim.log.levels.INFO)
+      assert.spy(notify_spy).was_called_with("Invalid Copilot CLI command: invalid_command", vim.log.levels.INFO)
     end)
   end)
 
@@ -103,7 +103,7 @@ describe("Commands Menu", function()
     local commands_menu
 
     before_each(function()
-      commands_menu = require("gemini_cli.commands_menu")
+      commands_menu = require("copilot_cli.commands_menu")
 
       -- Mock snacks.picker
       package.loaded["snacks.picker"] = function(opts)

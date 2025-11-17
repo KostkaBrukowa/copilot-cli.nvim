@@ -3,22 +3,19 @@ local health = vim.health or require("health")
 
 function M.check()
   health.start("Plugin Dependencies")
-  local options = require("gemini_cli.config").options
-  -- Check gemini-cli is executable
-  local version_output = vim.fn.systemlist(options.gemini_cmd .. " --version")
+  local options = require("copilot_cli.config").options
+  -- Check copilot CLI is executable
+  local version_output = vim.fn.systemlist(options.copilot_cmd .. " --version")
   if version_output and vim.v.shell_error == 0 then
     local version_str = version_output[#version_output]
     -- Handle potential ANSI codes in version string
     version_str = version_str:gsub("\x1b%[.-m", "")
-    -- Try parsing version (might fail if format is unexpected)
-    local ok, version = pcall(vim.version.parse, version_str)
-    if ok and version then
-      health.ok(string.format("gemini v%d.%d.%d found", version.major, version.minor, version.patch))
-    else
-      health.warn("Could not parse gemini-cli version from output: " .. version_str)
-    end
+    health.ok("Copilot CLI found: " .. version_str)
   else
-    health.error("Could not determine gemini-cli version for '" .. options.gemini_cmd .. "'.")
+    health.error("Could not find Copilot CLI for '" .. options.copilot_cmd .. "'.", {
+      "Install GitHub Copilot CLI from: https://docs.github.com/en/copilot/using-github-copilot/using-github-copilot-in-the-command-line",
+      "Ensure you are authenticated with 'gh auth login' or similar",
+    })
   end
 
   -- Snacks plugin check
@@ -37,9 +34,9 @@ function M.check()
   if options.auto_reload then
     if not vim.o.autoread then
       health.warn("auto_reload enabled, but 'autoread' is off.", {
-        "gemini-cli's auto_reload requires Neovim's 'autoread' option.",
+        "copilot-cli's auto_reload requires Neovim's 'autoread' option.",
         "Run ':set autoread' or add 'vim.o.autoread = true' to your config.",
-        "Alternatively, disable auto_reload: require('gemini_cli').setup({ auto_reload = false })",
+        "Alternatively, disable auto_reload: require('copilot_cli').setup({ auto_reload = false })",
       })
     else
       health.ok("auto_reload enabled and 'autoread' is set.")
@@ -48,7 +45,7 @@ function M.check()
     -- Check focus events needed for auto_reload
     -- FocusGained exists and not in tmux OR in tmux and ttymouse is set
     local ok_focus = (vim.fn.exists("#FocusGained") == 1 and vim.fn.exists("$TMUX") == 0)
-      or (os.getenv("TMUX") and vim.fn.exists("&ttymouse") == 1 and vim.o.ttymouse ~= "")
+        or (os.getenv("TMUX") and vim.fn.exists("&ttymouse") == 1 and vim.o.ttymouse ~= "")
     if not ok_focus then
       health.warn("auto_reload enabled, but focus events may not be detected.", {
         "Focus events trigger ':checktime' for auto_reload.",

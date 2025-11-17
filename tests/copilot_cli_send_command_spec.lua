@@ -1,6 +1,6 @@
-config = require("gemini_cli.config")
+config = require("copilot_cli.config")
 
-describe("GeminiQuickSendCommand", function()
+describe("CopilotQuickSendCommand", function()
   local assert = require("luassert")
   local mock = require("luassert.mock")
   local spy = require("luassert.spy")
@@ -8,12 +8,12 @@ describe("GeminiQuickSendCommand", function()
   local terminal_mock
   local picker_mock
 
-  local gemini_cli = require("gemini_cli")
+  local copilot_cli = require("copilot_cli")
   before_each(function()
-    terminal_mock = mock(require("gemini_cli.terminal"), true)
-    picker_mock = mock(require("gemini_cli.picker"), true)
+    terminal_mock = mock(require("copilot_cli.terminal"), true)
+    picker_mock = mock(require("copilot_cli.picker"), true)
 
-    package.loaded["gemini_cli.commands_slash"] = {
+    package.loaded["copilot_cli.commands_slash"] = {
       clear = { value = "/clear", description = "Clear the terminal screen", category = "direct" },
       chat = { value = "/chat", description = "Save, resume, or list conversation history", category = "input" },
     }
@@ -22,14 +22,14 @@ describe("GeminiQuickSendCommand", function()
   end)
 
   after_each(function()
-    package.loaded["gemini_cli.commands_slash"] = nil
+    package.loaded["copilot_cli.commands_slash"] = nil
     mock.revert(terminal_mock)
     mock.revert(picker_mock)
     vim.ui.input:revert()
   end)
 
   it("sends a basic command to the terminal", function()
-    gemini_cli.setup()
+    copilot_cli.setup()
 
     local mock_close = spy.new(function() end)
     local mock_picker = { close = mock_close }
@@ -39,13 +39,13 @@ describe("GeminiQuickSendCommand", function()
       return mock_picker
     end)
 
-    require("gemini_cli.api").open_command_picker()
+    require("copilot_cli.api").open_command_picker()
     assert.stub(terminal_mock.command).was_called_with("/clear", nil, nil)
     assert.spy(mock_close).was_called()
   end)
 
   it("handles canceled input gracefully", function()
-    gemini_cli.setup()
+    copilot_cli.setup()
 
     local mock_close = spy.new(function() end)
     local mock_picker = { close = mock_close }
@@ -59,13 +59,13 @@ describe("GeminiQuickSendCommand", function()
       callback(nil) -- Simulate canceled input
     end)
 
-    require("gemini_cli.api").open_command_picker()
+    require("copilot_cli.api").open_command_picker()
     assert.stub(terminal_mock.command).was_not_called() -- Verify no command sent
     assert.spy(mock_close).was_called()
   end)
 
   it("sends a command with input to the terminal", function()
-    gemini_cli.setup()
+    copilot_cli.setup()
     local mock_close = spy.new(function() end)
     local mock_picker = { close = mock_close }
 
@@ -79,7 +79,7 @@ describe("GeminiQuickSendCommand", function()
       callback("user_input")
     end)
 
-    require("gemini_cli.api").open_command_picker()
+    require("copilot_cli.api").open_command_picker()
     assert.stub(terminal_mock.command).was_called_with("/chat", "user_input", nil)
     assert.spy(mock_close).was_called() -- Verify picker closed
   end)

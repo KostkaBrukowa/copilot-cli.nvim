@@ -2,27 +2,27 @@ local M = {}
 
 local commands = {
   health = {
-    doc = "Run gemini-cli.nvim health check",
+    doc = "Run copilot-cli.nvim health check",
     impl = function()
-      require("gemini_cli.api").health_check()
+      require("copilot_cli.api").health_check()
     end,
   },
   toggle = {
-    doc = "Toggle GeminiCLI terminal",
+    doc = "Toggle Copilot CLI terminal",
     impl = function()
-      require("gemini_cli.api").toggle_terminal()
+      require("copilot_cli.api").toggle_terminal()
     end,
   },
   ask = {
     doc = "Ask a question",
     impl = function(input)
-      require("gemini_cli.api").send_to_terminal(input)
+      require("copilot_cli.api").send_to_terminal(input)
     end,
   },
   add_file = {
-    doc = "Add current file to GeminiCLI session",
+    doc = "Add current file to Copilot CLI session",
     impl = function()
-      require("gemini_cli.api").add_current_file()
+      require("copilot_cli.api").add_current_file()
     end,
   },
 }
@@ -33,7 +33,7 @@ function M._load_command(args)
     table.remove(args, 1)
     commands[cmd].impl(unpack(args))
   else
-    vim.notify("Invalid Gemini command: " .. (cmd or ""), vim.log.levels.INFO)
+    vim.notify("Invalid Copilot command: " .. (cmd or ""), vim.log.levels.INFO)
   end
 end
 
@@ -66,14 +66,14 @@ function M._menu()
 
   require("snacks.picker")({
     items = items,
-    layout = require("gemini_cli.config").options.picker_cfg,
+    layout = require("copilot_cli.config").options.picker_cfg,
     format = function(item)
       return {
         { ("%-" .. longest_cmd .. "s"):format(item.text), "Function" },
-        { " " .. item.description, "Comment" },
+        { " " .. item.description,                        "Comment" },
       }
     end,
-    prompt = "GeminiCLI Commands > ",
+    prompt = "Copilot CLI Commands > ",
     confirm = function(picker_instance, item)
       if item then
         wrapped_commands[item.name].impl()
@@ -86,4 +86,3 @@ end
 M.commands = commands
 
 return M
-

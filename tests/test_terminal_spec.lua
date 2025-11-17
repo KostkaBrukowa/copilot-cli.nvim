@@ -1,5 +1,5 @@
 describe("Terminal bracketed paste tests", function()
-  local terminal = require("gemini_cli.terminal")
+  local terminal = require("copilot_cli.terminal")
 
   -- Save the real reference to vim.api
   local original_api = vim.api

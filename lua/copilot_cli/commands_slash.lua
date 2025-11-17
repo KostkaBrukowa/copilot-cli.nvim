@@ -13,17 +13,21 @@ local COMMAND_PREFIX = "/"
 -- Command registry
 ---@type table<string, Command>
 local commands = {
-  compress = {
-    value = COMMAND_PREFIX .. "compress",
-    description = "Replace chat context with a summary to save tokens",
+  model = {
+    value = COMMAND_PREFIX .. "model",
+    description = "Change the AI model used by Copilot CLI",
     category = "direct",
   },
-  restore = {
-    value = COMMAND_PREFIX .. "restore",
-    description = "Restores project files to a state before a tool execution (requires --checkpointing)",
-    category = "input", -- Can take tool_call_id
+  feedback = {
+    value = COMMAND_PREFIX .. "feedback",
+    description = "Submit feedback about Copilot CLI (survey/bug report/feature request)",
+    category = "direct",
+  },
+  mcp = {
+    value = COMMAND_PREFIX .. "mcp",
+    description = "List and manage Model Context Protocol (MCP) servers",
+    category = "direct",
   },
 }
 
 return commands
-

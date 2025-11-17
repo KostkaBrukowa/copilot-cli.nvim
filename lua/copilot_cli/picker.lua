@@ -1,16 +1,16 @@
----@class gemini_cli.picker
+---@class copilot_cli.picker
 local M = {}
-local config = require("gemini_cli.config")
+local config = require("copilot_cli.config")
 
----Create a picker for GeminiCLI commands
----@param opts? gemini_cli.Config Optional config that will override the base config for this call only
+---Create a picker for Copilot CLI commands
+---@param opts? copilot_cli.Config Optional config that will override the base config for this call only
 ---@param confirm? fun(picker: snacks.Picker, item: table) Callback function when an item is selected
 function M.create(opts, confirm)
   opts = vim.tbl_deep_extend("force", config.options, opts or {})
   -- Build items from commands
   local items = {}
   local longest_cmd = 0
-  for cmd_name, cmd_data in pairs(require("gemini_cli.commands_slash")) do
+  for cmd_name, cmd_data in pairs(require("copilot_cli.commands_slash")) do
     table.insert(items, {
       text = cmd_data.value,
       description = cmd_data.description,
@@ -32,7 +32,7 @@ function M.create(opts, confirm)
     end,
 
     confirm = confirm,
-    prompt = "GeminiCLI \\ Commands > ",
+    prompt = "Copilot CLI \\ Commands > ",
   })
 end
 

@@ -7,32 +7,32 @@ describe("API Methods", function()
   local picker_mock
   local utils_mock
   local input_stub
-  local gemini_cli
+  local copilot_cli
   local bufname_stub
 
   before_each(function()
-    package.loaded["gemini_cli.health"] = {
+    package.loaded["copilot_cli.health"] = {
       check = stub.new(),
     }
 
     -- Now require the module
-    package.loaded["gemini_cli"] = nil
-    gemini_cli = require("gemini_cli")
-    gemini_cli.setup()
+    package.loaded["copilot_cli"] = nil
+    copilot_cli = require("copilot_cli")
+    copilot_cli.setup()
 
     -- Then mock other components
-    terminal_mock = mock(require("gemini_cli.terminal"), true)
-    picker_mock = mock(require("gemini_cli.picker"), true)
-    utils_mock = mock(require("gemini_cli.utils"), true)
+    terminal_mock = mock(require("copilot_cli.terminal"), true)
+    picker_mock = mock(require("copilot_cli.picker"), true)
+    utils_mock = mock(require("copilot_cli.utils"), true)
     input_stub = stub(vim.ui, "input")
     bufname_stub = stub(vim.fn, "bufname")
   end)
 
   after_each(function()
     -- Clean up modules
-    package.loaded["gemini_cli"] = nil
-    package.loaded["gemini_cli.health"] = nil
-    package.loaded["gemini_cli.config"] = nil
+    package.loaded["copilot_cli"] = nil
+    package.loaded["copilot_cli.health"] = nil
+    package.loaded["copilot_cli.config"] = nil
 
     -- Clean up mocks
     mock.revert(terminal_mock)
@@ -44,37 +44,37 @@ describe("API Methods", function()
   --
   describe("Core Functionality", function()
     it("health_check executes without errors", function()
-      gemini_cli.api.health_check()
-      assert.stub(require("gemini_cli.health").check).was_called()
+      copilot_cli.api.health_check()
+      assert.stub(require("copilot_cli.health").check).was_called()
     end)
 
     it("toggle_terminal calls terminal.toggle", function()
-      gemini_cli.api.toggle_terminal({ size = 20 })
+      copilot_cli.api.toggle_terminal({ size = 20 })
       assert.stub(terminal_mock.toggle).was_called_with({ size = 20 })
     end)
   end)
 
   describe("Terminal Interactions", function()
     it("send_to_terminal passes text to terminal", function()
-      gemini_cli.api.send_to_terminal("test content", { echo = false })
+      copilot_cli.api.send_to_terminal("test content", { echo = false })
       assert.stub(terminal_mock.send).was_called_with("test content", { echo = false })
     end)
 
     it("send_command executes terminal command", function()
-      gemini_cli.api.send_command("/test", "input", { silent = true })
+      copilot_cli.api.send_command("/test", "input", { silent = true })
       assert.stub(terminal_mock.command).was_called_with("/test", "input", { silent = true })
     end)
   end)
 
   describe("File Operations", function()
     it("add_file with valid path", function()
-      gemini_cli.api.add_file("/test/path", { force = true })
+      copilot_cli.api.add_file("/test/path", { force = true })
       assert.stub(terminal_mock.send).was_called_with("@/test/path", { force = true })
     end)
 
     it("add_file without path shows error", function()
       local notify_spy = spy.on(vim, "notify")
-      gemini_cli.api.add_file(nil)
+      copilot_cli.api.add_file(nil)
       assert.stub(terminal_mock.send).was_not_called()
       assert.spy(notify_spy).was_called_with("No file path provided", vim.log.levels.ERROR)
     end)
@@ -95,7 +95,7 @@ describe("API Methods", function()
       input_stub.invokes(function(_, cb)
         cb("user prompt")
       end)
-      gemini_cli.api.send_buffer_with_prompt()
+      copilot_cli.api.send_buffer_with_prompt()
       assert.stub(terminal_mock.send).was_called_with("line1\nline2\n> user prompt", {}, true)
     end)
 
@@ -103,17 +103,17 @@ describe("API Methods", function()
       input_stub.invokes(function(_, cb)
         cb("")
       end)
-      gemini_cli.api.send_buffer_with_prompt()
+      copilot_cli.api.send_buffer_with_prompt()
       assert.stub(terminal_mock.send).was_called_with("line1\nline2", {}, true)
     end)
 
     it("add_current_file with valid buffer", function()
-      gemini_cli.api.add_current_file({ force = true })
+      copilot_cli.api.add_current_file({ force = true })
       assert.stub(terminal_mock.send).was_called_with("@/project/file.lua", { force = true })
     end)
 
     it("add_read_only_file with valid buffer", function()
-      gemini_cli.api.add_read_only_file()
+      copilot_cli.api.add_read_only_file()
       assert.stub(terminal_mock.send).was_called_with("@/project/file.lua", nil)
     end)
 
@@ -151,7 +151,7 @@ describe("API Methods", function()
         assert.are.equal("Here are the diagnostics for test_buffer.lua:", opts.default)
         cb("") -- Simulate user pressing enter without input
       end)
-      gemini_cli.api.send_diagnostics_with_prompt()
+      copilot_cli.api.send_diagnostics_with_prompt()
 
       -- Expected output should be just the formatted diagnostics when input is empty
       assert.stub(terminal_mock.send).was_called_with(expected_formatted_output, {}, true)
@@ -186,7 +186,7 @@ describe("API Methods", function()
         assert.are.equal("Here are the diagnostics for test_buffer.lua:", opts.default)
         cb(user_input) -- Simulate user providing input
       end)
-      gemini_cli.api.send_diagnostics_with_prompt()
+      copilot_cli.api.send_diagnostics_with_prompt()
 
       -- Expected output should be user input + newline + formatted diagnostics
       local expected_output = user_input .. "\n" .. expected_formatted_output
@@ -207,7 +207,7 @@ describe("API Methods", function()
         return mock_picker
       end)
 
-      gemini_cli.api.open_command_picker()
+      copilot_cli.api.open_command_picker()
       local match = require("luassert.match")
       assert.stub(picker_mock.create).was_called_with(nil, match.is_function())
       assert.stub(terminal_mock.command).was_called_with("/test", nil, nil)
@@ -224,7 +224,7 @@ describe("API Methods", function()
         cb("test input")
       end)
 
-      gemini_cli.api.open_command_picker()
+      copilot_cli.api.open_command_picker()
       assert.stub(terminal_mock.command).was_called_with("/input", "test input", nil)
     end)
 
@@ -238,7 +238,7 @@ describe("API Methods", function()
         cb(nil)
       end)
 
-      gemini_cli.api.open_command_picker()
+      copilot_cli.api.open_command_picker()
       assert.stub(terminal_mock.command).was_not_called()
     end)
   end)
@@ -248,7 +248,7 @@ describe("API Methods", function()
       utils_mock.get_absolute_path.returns(nil)
       local notify_spy = spy.on(vim, "notify")
 
-      gemini_cli.api.add_current_file()
+      copilot_cli.api.add_current_file()
       assert.stub(terminal_mock.send).was_not_called()
       assert.spy(notify_spy).was_called_with("No valid file in current buffer", vim.log.levels.INFO)
     end)
@@ -257,7 +257,7 @@ describe("API Methods", function()
       utils_mock.get_absolute_path.returns(nil)
       local notify_spy = spy.on(vim, "notify")
 
-      gemini_cli.api.add_read_only_file()
+      copilot_cli.api.add_read_only_file()
       assert.stub(terminal_mock.send).was_not_called()
       assert.spy(notify_spy).was_called_with("No valid file in current buffer", vim.log.levels.INFO)
     end)

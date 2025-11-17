@@ -1,24 +1,24 @@
 local M = {}
-local commands = require("gemini_cli.commands_slash")
-local diagnostics = require("gemini_cli.diagnostics")
-local picker = require("gemini_cli.picker")
-local terminal = require("gemini_cli.terminal")
-local utils = require("gemini_cli.utils")
+local commands = require("copilot_cli.commands_slash")
+local diagnostics = require("copilot_cli.diagnostics")
+local picker = require("copilot_cli.picker")
+local terminal = require("copilot_cli.terminal")
+local utils = require("copilot_cli.utils")
 
 ---Run health check
 function M.health_check()
   vim.cmd([[
-checkhealth gemini_cli
+checkhealth copilot_cli
 ]])
 end
 
----Toggle gemini terminal
+---Toggle copilot terminal
 ---@param opts? table Optional configuration override
 function M.toggle_terminal(opts)
   terminal.toggle(opts or {})
 end
 
----Send text to gemini terminal
+---Send text to copilot terminal
 ---@param text? string Optional text to send (nil for visual selection/mode-based handling)
 ---@param opts? table Optional configuration override
 function M.send_to_terminal(text, opts)
@@ -40,7 +40,7 @@ function M.send_to_terminal(text, opts)
   else
     -- Normal mode handling
     if selected_text == "" then
-      vim.ui.input({ prompt = "Send to Gemini: " }, function(input)
+      vim.ui.input({ prompt = "Send to Copilot:" }, function(input)
         if input then
           terminal.send(input, opts or {})
         end
@@ -51,8 +51,8 @@ function M.send_to_terminal(text, opts)
   end
 end
 
----Send command to gemini terminal
----@param command string Gemini command to execute
+---Send command to copilot terminal
+---@param command string Copilot command to execute
 ---@param input? string Additional input for the command
 ---@param opts? table Optional configuration override
 function M.send_command(command, input, opts)
@@ -144,4 +144,3 @@ function M.open_command_picker(opts, callback)
 end
 
 return M
-

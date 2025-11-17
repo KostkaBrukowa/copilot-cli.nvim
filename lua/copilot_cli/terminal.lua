@@ -1,17 +1,17 @@
 local M = {}
 
-local config = require("gemini_cli.config")
+local config = require("copilot_cli.config")
 
----@param opts gemini_cli.Config
+---@param opts copilot_cli.Config
 ---@return string
 local function create_cmd(opts)
-  local cmd = { opts.gemini_cmd }
+  local cmd = { opts.copilot_cmd }
   vim.list_extend(cmd, opts.args or {})
   return table.concat(cmd, " ")
 end
 
 ---Toggle terminal visibility
----@param opts? gemini_cli.Config Optional config that will override the base config for this call only
+---@param opts? copilot_cli.Config Optional config that will override the base config for this call only
 ---@return snacks.win?
 function M.toggle(opts)
   local snacks = require("snacks.terminal")
@@ -24,7 +24,7 @@ end
 
 ---Send text to terminal
 ---@param text string Text to send
----@param opts? gemini_cli.Config Optional config that will override the base config for this call only
+---@param opts? copilot_cli.Config Optional config that will override the base config for this call only
 ---@param multi_line? boolean Whether to send as multi-line text (default: true)
 function M.send(text, opts, multi_line)
   multi_line = multi_line == nil and true or multi_line
@@ -33,7 +33,7 @@ function M.send(text, opts, multi_line)
   local cmd = create_cmd(opts)
   local term = require("snacks.terminal").get(cmd, opts)
   if not term then
-    vim.notify("Please open a GeminiCLI terminal first.", vim.log.levels.INFO)
+    vim.notify("Please open a Copilot CLI terminal first.", vim.log.levels.INFO)
     return
   end
 
@@ -51,21 +51,21 @@ function M.send(text, opts, multi_line)
         vim.api.nvim_chan_send(chan, text)
       end
     else
-      vim.notify("No GeminiCLI terminal job found!", vim.log.levels.ERROR)
+      vim.notify("No Copilot CLI terminal job found!", vim.log.levels.ERROR)
     end
   else
-    vim.notify("Please open a GeminiCLI terminal first.", vim.log.levels.INFO)
+    vim.notify("Please open a Copilot CLI terminal first.", vim.log.levels.INFO)
   end
 end
 
 ---Send a command to the terminal
----@param command string GeminiCLI command (e.g. "/help")
+---@param command string Copilot CLI command (e.g. "/help")
 ---@param text? string Text to send after the command
----@param opts? gemini_cli.Config Optional config that will override the base config for this call only
+---@param opts? copilot_cli.Config Optional config that will override the base config for this call only
 function M.command(command, text, opts)
   text = text or ""
 
-  -- NOTE: For GeminiCLI commands that shouldn't get a newline (e.g. `/help`)
+  -- NOTE: For Copilot CLI commands that shouldn't get a newline (e.g. `/help`)
   M.send(command .. " " .. text, opts, false)
 end
 

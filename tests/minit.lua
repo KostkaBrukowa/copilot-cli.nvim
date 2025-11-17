@@ -16,17 +16,17 @@ require("lazy.minit").setup({
     { dir = vim.uv.cwd() },
     "LazyVim/starter",
     {
-      "marcinjahn/gemini-cli.nvim",
+      "marcinjahn/copilot-cli.nvim",
       cmd = {
-        "GeminiTerminalToggle",
-        "GeminiHealth",
+        "CopilotTerminalToggle",
+        "CopilotHealth",
       },
       keys = {
-        { "<leader>a/", "<cmd>Gemini toggle<cr>", desc = "Open Gemini" },
-        { "<leader>as", "<cmd>Gemini send<cr>", desc = "Send to Gemini", mode = { "n", "v" } },
-        { "<leader>ac", "<cmd>Gemini command<cr>", desc = "Send Command To Gemini" },
-        { "<leader>ab", "<cmd>Gemini buffer<cr>", desc = "Send Buffer To Gemini" },
-        { "<leader>af", "<cmd>Gemini add_file<cr>", desc = "Add File to Gemini" },
+        { "<leader>a/", "<cmd>Copilot toggle<cr>", desc = "Open Copilot" },
+        { "<leader>as", "<cmd>Copilot send<cr>", desc = "Send to Copilot", mode = { "n", "v" } },
+        { "<leader>ac", "<cmd>Copilot command<cr>", desc = "Send Command To Copilot" },
+        { "<leader>ab", "<cmd>Copilot buffer<cr>", desc = "Send Buffer To Copilot" },
+        { "<leader>af", "<cmd>Copilot add_file<cr>", desc = "Add File to Copilot" },
       },
       dependencies = {
         "folke/snacks.nvim",
